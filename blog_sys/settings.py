@@ -37,6 +37,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'blogs',
 ]
 
 MIDDLEWARE = [
@@ -120,3 +121,5 @@ STATICFILES_DIRS= [
     'blog_sys/static',
 ]
 
+MEDIA_URL ='/media/'
+MEDIA_ROOT =BASE_DIR/'media' # all the user uploaded photos will be stored here

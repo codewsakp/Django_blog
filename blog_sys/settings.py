@@ -39,6 +39,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'blogs',
     'AboutUsApp',
+    'crispy_forms',
+    'crispy_bootstrap4',
 ]
 
 MIDDLEWARE = [
@@ -126,3 +128,5 @@ STATICFILES_DIRS= [
 
 MEDIA_URL ='/media/'
 MEDIA_ROOT =BASE_DIR/'media' # all the user uploaded photos will be stored here
+
+CRISPY_TEMPLATE_PACK = 'bootstrap4'

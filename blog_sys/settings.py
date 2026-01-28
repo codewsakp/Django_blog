@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     'AboutUsApp',
     'crispy_forms',
     'crispy_bootstrap4',
+    'dashboards',
 ]
 
 MIDDLEWARE = [

@@ -2,6 +2,7 @@ from django.shortcuts import get_object_or_404, redirect, render
 from blogs.models import Blog, Category
 from django.contrib.auth.decorators import login_required
 from .forms import BlogPostForm, CategoryForm
+from django.template.defaultfilters import slugify
 
 # Create your views here.
 
@@ -63,8 +64,43 @@ def posts(request):
 
 
 def add_post(request):
+    if request.method == "POST":
+        form = BlogPostForm(request.POST, request.FILES)
+        if form.is_valid():
+            post = form.save(commit=False)#temporarily saving the form
+            post.author = request.user
+            post.save() #saving it here because we want title' pk below
+            title = form.cleaned_data['title']
+            post.slug = slugify(title) + '-' +str(post.id) #will give slug+post's primary key to keep the slugs different even if the title is same.
+            post.save()
+            return redirect('posts')
+
     form = BlogPostForm()
     context = {
         'form': form,
     }
     return render(request, 'dashboard/add_post.html', context)
+
+def edit_post(request, pk):
+    post = get_object_or_404(Blog, pk=pk)
+    if request.method == 'POST':
+        form = BlogPostForm(request.POST, request.FILES, instance=post)
+        if form.is_valid():
+            post = form.save() # here we got post instance
+            title = form.cleaned_data['title']
+            post.slug = slugify(title) + '-'+ str(post.id) # because user may change the title
+            post.save()
+            return redirect('posts')
+
+    form = BlogPostForm(instance=post) # all the content i.e blog body appears in the post
+    context = {
+        'form' : form,
+        'post' : post,
+    }
+    return render(request, 'dashboard/edit_post.html', context)
+
+
+def delete_post(request, pk):
+    post = get_object_or_404(Blog, pk=pk)
+    post.delete()
+    return redirect('posts')

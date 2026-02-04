@@ -1,7 +1,7 @@
 from django.shortcuts import redirect, render, get_object_or_404
-from django.http import HttpResponse
+from django.http import HttpResponse, HttpResponseRedirect
 
-from .models import Blog, Category
+from .models import Blog, Category, Comment
 from django.db.models import Q 
 #Q object helps to do complex operations like OR in filter()
 
@@ -29,8 +29,22 @@ def posts_by_category(request, category_id ):
 
 def blogs(request, slug):
     single_blog = get_object_or_404(Blog, slug =slug, status='Published')
+    if request.method=="POST":
+        comment = Comment()
+        comment.user = request.user
+        comment.blog = single_blog
+        comment.comment = request.POST['comment']
+        comment.save()
+        return HttpResponseRedirect(request.path_info)  # after commenting it redirects to the same blog page
+
+    #Comments
+    comments = Comment.objects.filter(blog=single_blog)
+    comments_count = comments.count()
+
     context={
         'single_blog' : single_blog,
+        'comments' : comments,
+        'comments_count' : comments_count,
     }
     return render(request, 'blogs.html',context)
 
